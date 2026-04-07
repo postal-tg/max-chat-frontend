@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="glass p-4 mb-4">
+  <h1 class="h3 mb-1">Ошибки</h1>
+  <p class="text-muted mb-0">Последние неуспешные вызовы LLM и ошибки ответа пользователю.</p>
+</div>
+
+<div class="glass p-4">
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Conversation</th>
+          <th>Провайдер</th>
+          <th>Ошибка</th>
+          <th>Дата</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td><a href="/llm-requests/{{ item.id }}">{{ item.id }}</a></td>
+          <td><a href="/conversations/{{ item.conversation_id }}">{{ item.conversation_id }}</a></td>
+          <td>{{ item.provider_name }} / {{ item.provider_model }}</td>
+          <td>{{ item.error_message or "-" }}</td>
+          <td>{{ item.updated_at }}</td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="5" class="text-muted">Ошибок пока нет.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

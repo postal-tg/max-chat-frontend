@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if unavailable %}
+<div class="glass p-4">
+  <h1 class="h4 mb-2">Backend временно недоступен</h1>
+  <a href="/llm-requests" class="btn btn-dark">Назад к списку</a>
+</div>
+{% elif not_found %}
+<div class="glass p-4">
+  <h1 class="h4 mb-2">LLM-вызов не найден</h1>
+  <a href="/llm-requests" class="btn btn-dark">Назад к списку</a>
+</div>
+{% else %}
+<div class="glass p-4 mb-4">
+  <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
+    <div>
+      <h1 class="h3 mb-1">LLM-вызов #{{ llm_request.id }}</h1>
+      <p class="text-muted mb-0">{{ llm_request.provider_name }} / {{ llm_request.provider_model }}</p>
+    </div>
+    <a href="/llm-requests" class="btn btn-outline-dark">К списку</a>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-md-6">
+    <div class="glass p-4">
+      <h2 class="h5 mb-3">Метаданные</h2>
+      <p class="mb-2"><strong>Conversation:</strong> {% if conversation %}<a href="/conversations/{{ conversation.id }}">{{ conversation.id }}</a>{% else %}-{% endif %}</p>
+      <p class="mb-2"><strong>User:</strong> {% if user %}<a href="/users/{{ user.id }}">{{ user.max_user_id }}</a>{% else %}-{% endif %}</p>
+      <p class="mb-2"><strong>Status:</strong> {{ llm_request.status }}</p>
+      <p class="mb-2"><strong>Created:</strong> {{ llm_request.created_at }}</p>
+      <p class="mb-0"><strong>Error:</strong> {{ llm_request.error_message or "-" }}</p>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="glass p-4">
+      <h2 class="h5 mb-3">Usage</h2>
+      <p class="mb-2"><strong>Prompt tokens:</strong> {{ llm_request.prompt_tokens or "-" }}</p>
+      <p class="mb-2"><strong>Completion tokens:</strong> {{ llm_request.completion_tokens or "-" }}</p>
+      <p class="mb-2"><strong>Total tokens:</strong> {{ llm_request.total_tokens or "-" }}</p>
+      <p class="mb-2"><strong>Latency:</strong> {{ llm_request.latency_ms or "-" }}</p>
+      <p class="mb-0"><strong>Finished:</strong> {{ llm_request.finished_at or "-" }}</p>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-md-6">
+    <div class="glass p-4">
+      <h2 class="h5 mb-3">Промпт пользователя</h2>
+      {% if user_message %}
+      <p class="text-muted mb-2">Message #<a href="/messages/{{ user_message.id }}">{{ user_message.id }}</a></p>
+      <pre class="wrap">{{ user_message.normalized_text or user_message.raw_text }}</pre>
+      {% else %}
+      <p class="text-muted mb-0">Нет связанного сообщения.</p>
+      {% endif %}
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="glass p-4">
+      <h2 class="h5 mb-3">Ответ ассистента</h2>
+      {% if assistant_message %}
+      <p class="text-muted mb-2">Message #<a href="/messages/{{ assistant_message.id }}">{{ assistant_message.id }}</a></p>
+      <pre class="wrap">{{ assistant_message.normalized_text or assistant_message.raw_text }}</pre>
+      {% else %}
+      <p class="text-muted mb-0">Ответ еще не сохранен.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

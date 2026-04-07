@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if unavailable %}
+<div class="glass p-4">
+  <h1 class="h4 mb-2">Backend временно недоступен</h1>
+  <a href="/messages" class="btn btn-dark">Назад к списку</a>
+</div>
+{% elif not_found %}
+<div class="glass p-4">
+  <h1 class="h4 mb-2">Сообщение не найдено</h1>
+  <a href="/messages" class="btn btn-dark">Назад к списку</a>
+</div>
+{% else %}
+<div class="glass p-4 mb-4">
+  <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
+    <div>
+      <h1 class="h3 mb-1">Сообщение #{{ message.id }}</h1>
+      <p class="text-muted mb-0">Роль: {{ message.role }}</p>
+    </div>
+    <a href="/messages" class="btn btn-outline-dark">К списку</a>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-md-6">
+    <div class="glass p-4">
+      <h2 class="h5 mb-3">Метаданные</h2>
+      <p class="mb-2"><strong>Conversation:</strong> {% if conversation %}<a href="/conversations/{{ conversation.id }}">{{ conversation.id }}</a>{% else %}-{% endif %}</p>
+      <p class="mb-2"><strong>User:</strong> {% if user %}<a href="/users/{{ user.id }}">{{ user.max_user_id }}</a>{% else %}-{% endif %}</p>
+      <p class="mb-2"><strong>Status:</strong> {{ message.status }}</p>
+      <p class="mb-2"><strong>Source timestamp:</strong> {{ message.source_message_timestamp or "-" }}</p>
+      <p class="mb-0"><strong>Created:</strong> {{ message.created_at }}</p>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="glass p-4">
+      <h2 class="h5 mb-3">Валидация</h2>
+      <p class="mb-2"><strong>Prompt hash:</strong> {{ message.prompt_hash or "-" }}</p>
+      <p class="mb-0"><strong>Validation error:</strong> {{ message.validation_error or "-" }}</p>
+    </div>
+  </div>
+</div>
+
+<div class="glass p-4">
+  <h2 class="h5 mb-3">Текст</h2>
+  <p class="text-muted mb-2">Normalized text</p>
+  <pre class="wrap">{{ message.normalized_text or "-" }}</pre>
+  <p class="text-muted mb-2">Raw text</p>
+  <pre class="wrap">{{ message.raw_text or "-" }}</pre>
+</div>
+{% endif %}
+{% endblock %}

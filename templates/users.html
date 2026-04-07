@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="glass p-4 mb-4">
+  <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
+    <div>
+      <h1 class="h3 mb-1">Пользователи</h1>
+      <p class="text-muted mb-0">Поиск по username, имени и фамилии.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+      <a class="btn btn-outline-dark" href="/exports/users.csv">Экспорт CSV</a>
+      <form method="get" class="d-flex gap-2">
+        <input type="text" class="form-control" name="search" value="{{ search }}" placeholder="Поиск">
+        <button class="btn btn-dark" type="submit">Найти</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="glass p-4">
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>MAX ID</th>
+          <th>Username</th>
+          <th>Имя</th>
+          <th>Locale</th>
+          <th>Запросы</th>
+          <th>Последняя активность</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td><a href="/users/{{ item.id }}">{{ item.max_user_id }}</a></td>
+          <td>{{ item.username or "-" }}</td>
+          <td>{{ item.first_name or "" }} {{ item.last_name or "" }}</td>
+          <td>{{ item.locale or "-" }}</td>
+          <td>{{ item.total_requests }}</td>
+          <td>{{ item.last_seen_at }}</td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="6" class="text-muted">Пользователи пока не появились.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="glass p-4 mb-4">
+  <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
+    <div>
+      <h1 class="h3 mb-1">Диалоги</h1>
+      <p class="text-muted mb-0">История чатов пользователей с ботом.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+      <a class="btn btn-outline-dark" href="/exports/conversations.csv">Экспорт CSV</a>
+      <form method="get" class="d-flex gap-2">
+        <select class="form-select" name="active">
+          <option value="" {% if not active %}selected{% endif %}>Все</option>
+          <option value="true" {% if active == "true" %}selected{% endif %}>Только active</option>
+          <option value="false" {% if active == "false" %}selected{% endif %}>Только closed</option>
+        </select>
+        <button class="btn btn-dark" type="submit">Фильтр</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="glass p-4">
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>User ID</th>
+          <th>Chat ID</th>
+          <th>Тип</th>
+          <th>Статус</th>
+          <th>Последнее сообщение</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td><a href="/conversations/{{ item.id }}">{{ item.id }}</a></td>
+          <td>{{ item.max_user_id }}</td>
+          <td>{{ item.max_chat_id }}</td>
+          <td>{{ item.conversation_type }}</td>
+          <td>{{ "active" if item.is_active else "closed" }}</td>
+          <td>{{ item.last_message_at or "-" }}</td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="6" class="text-muted">Диалоги пока не появились.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
