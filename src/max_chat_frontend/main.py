@@ -12,8 +12,22 @@ settings = get_settings()
 app = FastAPI(title=settings.app_name)
 app.add_middleware(SessionMiddleware, secret_key=settings.frontend_secret_key)
 
-templates = Jinja2Templates(directory=str(Path(__file__).resolve().parents[2] / "templates"))
 client = BackendApiClient(settings)
+
+
+def resolve_templates_dir() -> str:
+    candidates = [
+        Path(__file__).resolve().parents[2] / "templates",
+        Path.cwd() / "templates",
+        Path("/app/templates"),
+    ]
+    for candidate in candidates:
+        if candidate.exists():
+            return str(candidate)
+    raise RuntimeError("Templates directory was not found.")
+
+
+templates = Jinja2Templates(directory=resolve_templates_dir())
 
 
 def is_authenticated(request: Request) -> bool:
@@ -35,7 +49,7 @@ def fetch_with_fallback(path: str, *, default: dict, params: dict | None = None)
 
 def template_response(request: Request, template_name: str, context: dict, *, status_code: int = 200) -> HTMLResponse:
     payload = {"request": request, **context}
-    return templates.TemplateResponse(template_name, payload, status_code=status_code)
+    return templates.TemplateResponse(request=request, name=template_name, context=payload, status_code=status_code)
 
 
 @app.get("/", response_class=HTMLResponse)
